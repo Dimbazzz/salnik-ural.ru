@@ -2,9 +2,9 @@ title: Промышленный каталог — ТЗ и документац�
 description: Единое ТЗ, шаблон template-product, адаптер, schema, HowTo
 lang: ru
 
-# GitHub Pages
-# baseurl: /REPO_NAME   # раскомментируйте, если сайт = username.github.io/REPO_NAME
-# url: https://USERNAME.github.io
+GitHub Pages
+baseurl: /salnik-ural.ru
+url: https://Dimbazzz.github.io
 
 remote_theme: pages-themes/cayman@v0.2.0
 plugins:
