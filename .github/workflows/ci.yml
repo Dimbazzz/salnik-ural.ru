@@ -1,0 +1,47 @@
+# CI: PHP lint + демо-скрипты комплекта ТЗ
+
+name: CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+
+jobs:
+  php:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.1', '8.2', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, mbstring
+          coverage: none
+
+      - name: Lint PHP
+        run: |
+          set -e
+          find . -name '*.php' -not -path './vendor/*' | while read -r f; do
+            php -l "$f"
+          done
+
+      - name: Validate schema JSON
+        run: |
+          test -f product.schema.json || test -f schema/product.schema.json
+          SCHEMA=product.schema.json
+          test -f "$SCHEMA" || SCHEMA=schema/product.schema.json
+          php -r "json_decode(file_get_contents('$SCHEMA')); exit(json_last_error()===JSON_ERROR_NONE?0:1);"
+
+      - name: Run kit demos (if present)
+        run: |
+          set -e
+          for s in example-adapter-usage.php example-weight-mapper.php \
+                   example-productToTemplateVars.php example-ProductSchemaBuilder.php \
+                   example-HowToBuilder.php; do
+            if [ -f "$s" ]; then php "$s"; fi
+          done
